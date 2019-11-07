@@ -8,17 +8,16 @@ div.container
     div.col-4
       div.card
         //- TODO: Modify the pug code below to conditionally set the image_src
-        - let image_src = '../../resources/img/helmet.jpg'
-
-        img.card-img-top#player_img(src= image_src, alt="Football Player")
+        - if(playerdata)
+          for item4 in playerdata
+            img.card-img-top#player_img(src= "../" + item4.img_src, alt="Football Player")
         div.card-body.mx-auto
           form.form(action="/player_info/select_player", method="get")
             select.custom-select(name="player_choice", onchange="this.form.submit()")
               option(selected) Select Player
               - if(namedata)
-              - var uid = 0
               for item in namedata
-                option(value= uid++)= item.name
+                option(value= item.id)= item.name
 
 
               //- TODO: Populate the select with player options. Set the value to the player's id and display the player's name.
@@ -27,30 +26,28 @@ div.container
         table.table
           //- TODO: Set the player's information. On select, fill in the player's information in each of the field below. You will need to calculate the average rushing, receiving, and passing yards.
           - if(playerdata)
-            - if(userid)
-            - var currid = 0
-            for uitem in playerdata
-
-              p= userid
-              if currid = userid
-                tr
-                  th Year
-                  td= uitem.year
-                tr
-                  th Major
-                  td ?
-                tr
-                  th Games Played
-                  td ?
-                tr
-                  td Passing Yards:
-                  td Avg. Passing Yards:
-                tr
-                  td Rushing Yards:
-                  td Avg. Rushing Yards:
-                tr
-                  td Receiving Yards:
-                  td Avg. Receiving Yards:
+          for item2 in playerdata
+            - let image_src = "../" + item2.img_src
+            tr
+              th Year
+              td= item2.year
+            tr
+              th Major
+              td= item2.major
+            tr
+              th Games Played
+              - if(gameplayed)
+              for item3 in gameplayed
+                  td= item3.count
+                  tr
+                  td= "Passing Yards: " + item2.passing_yards
+                  td= "Avg. Passing Yards: " + item2.passing_yards / item3.count
+                  tr
+                  td= "Rushing Yards: " + item2.rushing_yards
+                  td= "Avg. Rushing Yards: " + item2.rushing_yards / item3.count
+                  tr
+                  td= "Receiving Yards: " + item2.receiving_yards
+                  td= "Avg. Receiving Yards: " + item2.receiving_yards / item3.count
 
 
 

@@ -190,33 +190,35 @@ app.get('/team_stats', function(req, res) {
 
 
 app.get('/player_info', function(req, res) {
-	var query = 'SELECT name FROM football_players;';
+	var query = 'SELECT id,name FROM football_players;';
 	db.any(query)
 		.then(function (rows) {
-			res.render('pages/player_info',{
+			res.render('pages/player_info2',{
 				my_title: "Players",
-				namedata: rows,
+				namedata: rows
 			})
 
 		})
 		.catch(function (err) {
 			// display error message in case an error
 			request.flash('error', err);
-			res.render('pages/player_info',{
+			res.render('pages/player_info2',{
 				my_title: "My Title Here",
-				namedata: '',
+				namedata: ''
 			})
 		})
 
 });
 app.get('/player_info/select_player', function(req, res) {
-	var uid = req.query.select_player;
-	var query1 = 'SELECT name FROM football_players;';
-	var query2 = 'select * from football_players;';
+	var uid = req.query.player_choice;
+	var query1 = 'SELECT id,name FROM football_players;';
+	var query2 = "select * from football_players where id = " + uid +";";
+	var query3 = "SELECT count(*) from football_games where '" + uid +"' = ANY(players);";
 	db.task('get-everything', task => {
 		return task.batch([
 			task.any(query1),
-			task.any(query2)
+			task.any(query2),
+			task.any(query3)
 		]);
 	})
 		.then(data => {
@@ -224,7 +226,7 @@ app.get('/player_info/select_player', function(req, res) {
 				my_title: "Players",
 				namedata: data[0],
 				playerdata: data[1],
-				userid: uid
+				gameplayed: data[2]
 			})
 		})
 		.catch(error => {
